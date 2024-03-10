@@ -8,9 +8,8 @@ This section will list the libraries and frameworks that I used to complete this
 Python, OpenCV
 
 ## Road Map:
-- [ ] Detection Class
+- [X] Detection Class
 - [ ] Tracker Class
-- [ ] Servo Class
 - [ ] Servo and Detection integration
 - [ ] Testing on Raspberry Pi
 - [ ] Modeling CAD structure
