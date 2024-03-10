@@ -1,18 +1,18 @@
 import cv2 as cv
 from detector import Detector, Mode
+from tracker import Tracker2D
 
 capture = cv.VideoCapture(0)
 detector = Detector(Mode.FACE)
+tracker = Tracker2D(detector)
 
 while True:
     
     ret, frame = capture.read()
-    detector.get_next_frame(ret, frame)
+    tracker.get_next_frame(ret, frame)
     
-    if detector.bounds:
-        x, y, w, h = detector.bounds
-        print(f"{x}, {y}, {w}, {h}\n")
-        cv.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), thickness=2)
+    if detector.box_x != None:
+        detector.draw()
     else:
         print("None")
         
