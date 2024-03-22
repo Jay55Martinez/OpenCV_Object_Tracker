@@ -5,6 +5,7 @@ from tracker import Tracker2D
 capture = cv.VideoCapture(0)
 detector = Detector(Mode.FACE)
 tracker = Tracker2D(detector)
+tracker.debug = True
 
 while True:
     
@@ -12,7 +13,7 @@ while True:
     tracker.get_next_frame(ret, frame)
     
     if detector.box_x != None:
-        detector.draw()
+        tracker.draw()
     else:
         print("None")
         

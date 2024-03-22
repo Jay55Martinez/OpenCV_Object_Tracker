@@ -4,7 +4,6 @@
 # Tracker2D only moves across the x axis. (left and right)
 # anything to the left of the frame is negative, anything to the right is positive.
 # Given a dampening factor, the Tracker2D will adjust the servo to keep the object in the center of the frame.
-
 import cv2 as cv
 
 class Tracker2D:
@@ -15,11 +14,12 @@ class Tracker2D:
     dampening_factor: (float) a value between 0 and 1 that will be used to adjust the servo sensitivity
     of how close to the center of the frame the object should be.
     """
-    def __init__(self, detector, dampening_factor=0.5, refresh_rate=5):
+    def __init__(self, detector, dampening_factor=0.5, refresh_rate=5, debug=False):
         self.detector = detector
         self.dampening_factor = dampening_factor
         self.displacement = 0
         self.refresh_rate = refresh_rate
+        self.debug = debug
         
         
     def get_next_frame(self, ret, frame):
@@ -28,9 +28,7 @@ class Tracker2D:
         updates the frame and the bounds of the object in the frame.
         """
         self.detector.get_next_frame(ret, frame)
-        
-        if self.detector.box_x != None:
-            self.find_displacement()
+        self.find_displacement()
         
     def find_displacement(self):
         """
@@ -44,7 +42,7 @@ class Tracker2D:
         
         self.displacement = frame_center - box_center
         # TODO: add a dampening factor to the displacement
-        print(self.displacement)
+
         
     
         
