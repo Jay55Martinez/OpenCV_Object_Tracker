@@ -24,7 +24,6 @@ class Detector:
     Detector() 
     """
     def __init__(self, mode, xml_file_path=None):
-        self.ret = None
         self.mode = mode
         self.ixl_file = xml_file_path
         self.frame = None
@@ -36,8 +35,7 @@ class Detector:
         self.box_height = None
         
     # get the next frame to be processed returns box corrds (x, y, w, h)
-    def get_next_frame(self, ret, frame):
-        self.ret = ret
+    def get_next_frame(self, frame):
         self.frame = frame
         self.frame_width = self.frame.shape[1]
         self.frame_height = self.frame.shape[0]
