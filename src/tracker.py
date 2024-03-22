@@ -22,12 +22,12 @@ class Tracker2D:
         self.refresh_rate = refresh_rate
         
         
-    def get_next_frame(self, ret, frame):
+    def get_next_frame(self, frame):
         """
         get_next_frame(None, None) -> None:
         updates the frame and the bounds of the object in the frame.
         """
-        self.detector.get_next_frame(ret, frame)
+        self.detector.get_next_frame(frame)
         
         if self.detector.box_x != None:
             self.find_displacement()
@@ -44,7 +44,7 @@ class Tracker2D:
         
         self.displacement = frame_center - box_center
         # TODO: add a dampening factor to the displacement
-        print(self.displacement)
+        # print(self.displacement)
         
     
         
