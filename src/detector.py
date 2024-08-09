@@ -15,7 +15,8 @@ from enum import Enum
 class Mode(Enum):
     FACE = 1
     MOTION = 2
-    FILE = 3   
+    FILE = 3  
+    RAW = 4 
     
 # Detector Class
 
@@ -44,6 +45,8 @@ class Detector:
             self.face_dect()
         elif self.mode == Mode.FILE:
             self.reginition_dect()
+        elif self.mode == Mode.RAW:
+            self.no_dect()
         else:
             raise RuntimeError("Detector mode not recognized")
         
@@ -75,6 +78,15 @@ class Detector:
     def face_dect(self):
         self.ixl_file = "../out/haar_face.xml"
         self.reginition_dect()
+
+    def no_dect(self):
+        '''
+        No detection algorithm will run. Box will be drawn in the center of the screen.
+        '''
+        self.box_x = int(self.frame_width/2)
+        self.box_y = int(self.frame_height/2)
+        self.box_width = 100
+        self.box_height = 100
         
     def face_dect_YuNet(self):
         pass
