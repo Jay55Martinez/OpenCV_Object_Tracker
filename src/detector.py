@@ -76,6 +76,9 @@ class Detector:
         self.ixl_file = "../out/haar_face.xml"
         self.reginition_dect()
         
+    def face_dect_YuNet(self):
+        pass
+        
     def draw(self):
         """
         draws a bounding box around the object being tracked on the frame

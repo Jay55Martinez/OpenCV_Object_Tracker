@@ -18,9 +18,6 @@ while True:
     
     if detector.box_x != None:
         detector.draw()
-        tracker.draw()
-    else:
-        print("None")
         
     cv.imshow("Video feed", frame)
     if cv.waitKey(20) & 0xFF==ord('d'):
