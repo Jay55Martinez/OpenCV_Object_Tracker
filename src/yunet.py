@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 # current implementation of yunet.py works only on pc not rpi
+# file ment to demonstrate the use of the yunet face detector and not for actual implementation
 
 def visualize(image, faces, print_flag=False, fps=None):
     output = image.copy()
@@ -34,7 +35,7 @@ def main():
         print("Error: Could not open camera.")
         return
     
-    yunet = cv.FaceDetectorYN.create('/Users/jaymartinez/Documents/GitHub/OpenCV_Object_Tracker/out/face_detection_yunet_2022mar.onnx',  '', (0, 0))
+    yunet = cv.FaceDetectorYN.create('../out/face_detection_yunet_2022mar.onnx',  '', (0, 0))
     tm = cv.TickMeter()
     frame_w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
     frame_h = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
