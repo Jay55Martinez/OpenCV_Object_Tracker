@@ -1,3 +1,4 @@
+from picamera2 import Picamera2
 import cv2 as cv
 import numpy as np
 # current implementation of yunet.py works only on pc not rpi
@@ -29,28 +30,32 @@ def visualize(image, faces, print_flag=False, fps=None):
 
 def main():
     # takes input frames from camera (pc not rpi)
-    cap = cv.VideoCapture(0) 
+    camera = Picamera2()
+    camera.configure(camera.create_preview_configuration(main={'format':'XRGB8888', 'size':(3280,2464)}))
+    camera.start()
     
-    if not cap.isOpened():
-        print("Error: Could not open camera.")
-        return
+    # if not cap.isOpened():
+    #     print("Error: Could not open camera.")
+    #     return
     
+    image = camera.capture_array()
     yunet = cv.FaceDetectorYN.create('../out/face_detection_yunet_2022mar.onnx',  '', (0, 0))
     tm = cv.TickMeter()
-    frame_w = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
-    frame_h = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+    frame_w = int(image.shape[1])
+    frame_h = int(image.shape[0])
     yunet.setInputSize([frame_w, frame_h])
     
     while True:
-            has_frame, frame = cap.read()
-            if not has_frame:
-                print('No frames grabbed!')
+            frame = camera.capture_array()
+            rgb_image = cv.cvtColor(frame, cv.COLOR_RGBA2RGB)
 
             tm.start()
-            _, faces = yunet.detect(frame) # faces: None, or nx15 np.array
+            _, faces = yunet.detect(rgb_image) # faces: None, or nx15 np.array
             tm.stop()
 
-            frame = visualize(frame, faces, fps=tm.getFPS())
+            print(faces)
+            if faces is not None:
+                frame = visualize(frame, faces, fps=tm.getFPS())
             cv.imshow('libfacedetection demo', frame)
 
             tm.reset()

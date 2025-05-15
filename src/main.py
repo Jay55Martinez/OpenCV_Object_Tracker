@@ -7,37 +7,37 @@ from detector import Detector, Mode
 from tracker import Tracker2D
 
 camera = Picamera2()
-camera.configure(camera.create_preview_configuration(main={'format':'XRGB8888', 'size':(3280,2464)}))
+camera.configure(camera.create_preview_configuration(main={'format':'XRGB8888', 'size':(1920,1080)}))
 camera.start()
 
 # A0090
-motor = ServoUtil(11, 50, 2.5, 7.5, 12)
-print('here')
-time.sleep(2)
-motor.set_angle(0) # left -90 degrees 
-print('here')
-time.sleep(2)
-motor.set_angle(90) # center 
-print('here')
-time.sleep(2)
-motor.set_angle(180) # right 90 degrees
 
-detector = Detector(Mode.RAW)
-tracker = Tracker2D(detector)
+motor = ServoUtil(18, 50, 2.5, 7.5, 12)
+
+detector = Detector(Mode.YUNET)
+tracker = Tracker2D(detector, motor)
 tracker.debug = True
 
+# want a detect once every 10 frames
+counter = 0
+
 while True:
-    
+    counter += 1
+
     frame = camera.capture_array()
-    tracker.get_next_frame(frame)
+
+    if counter == 20:
+        tracker.get_next_frame(frame)
     
-    if detector.box_x != None:
-        detector.draw()
+        if detector.box_x != None:
+            detector.draw()
+
+        counter = 0
         
     cv.imshow("Video feed", frame)
     if cv.waitKey(20) & 0xFF==ord('d'):
         break
     
 cv.destroyAllWindows()
-motor.finish()
+# motor.finish()
 GPIO.cleanup()

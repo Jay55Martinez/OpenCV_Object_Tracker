@@ -19,7 +19,7 @@ class ServoUtil:
         self.center = center
         self.right = right
 
-        GPIO.setmode(GPIO.BOARD)
+        GPIO.setmode(GPIO.BCM)
         GPIO.setup(gpio_pin, GPIO.OUT)
         
         self.servo = GPIO.PWM(gpio_pin, frequency)

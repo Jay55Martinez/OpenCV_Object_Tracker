@@ -8,6 +8,7 @@
 
 import cv2 as cv
 import os
+import numpy as np
 from enum import Enum
 
 # Need an enum for mode 
@@ -104,9 +105,11 @@ class Detector:
         --------------------------
         YuNet is a lightweight face detection model that is designed to run using a CPU.
         '''
+        rgb_image = cv.cvtColor(self.frame, cv.COLOR_RGBA2RGB)
+
         self.detection_model.setInputSize([self.frame_width, self.frame_height])
         
-        _, faces = self.detection_model.detect(self.frame)
+        _, faces = self.detection_model.detect(rgb_image)
         
         # face detected get the largest could change to getting the most acurate one
         self.bounds = None
@@ -114,19 +117,19 @@ class Detector:
         if faces is not None:
             for face in faces:
                 # Extract the bounding box coordinates
-                x, y, w, h = face[:4]
+                coords = face[:-1].astype(np.int32)
                 
                 # reused code 
                 if self.bounds == None:
-                    self.box_x = x
-                    self.box_y = y
-                    self.box_width = w
-                    self.box_height = h
-                elif (w * h) > self.bounds[2] * self.bounds[3]:
-                    self.box_x = x
-                    self.box_y = y
-                    self.box_width = w
-                    self.box_height = h
+                    self.box_x = coords[0]
+                    self.box_y = coords[1]
+                    self.box_width = coords[2]
+                    self.box_height = coords[3]
+                elif (coords[2] * coords[3]) > self.bounds[2] * self.bounds[3]:
+                    self.box_x = coords[0]
+                    self.box_y = coords[1]
+                    self.box_width = coords[2]
+                    self.box_height = coords[3]
         
         
     def draw(self):
