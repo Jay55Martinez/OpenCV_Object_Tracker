@@ -20,6 +20,8 @@ try:
         # Capture frame from camera
         frame = picam2.capture_array()
 
+        frame = cv2.rotate(frame, cv2.ROTATE_180)
+
         # Convert to grayscale for detection
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
