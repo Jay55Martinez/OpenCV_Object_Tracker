@@ -12,13 +12,15 @@ picam2.start()
 time.sleep(1)
 
 # Load Haar cascade for face detection
-face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + "haarcascade_frontalface_default.xml")
+face_cascade = cv2.CascadeClassifier("../out/haar_face.xml")
 
 # Preview loop
 try:
     while True:
         # Capture frame from camera
         frame = picam2.capture_array()
+
+        frame = cv2.rotate(frame, cv2.ROTATE_180)
 
         # Convert to grayscale for detection
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)

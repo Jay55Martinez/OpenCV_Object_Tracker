@@ -26,6 +26,8 @@ while True:
 
     frame = camera.capture_array()
 
+    frame = cv.rotate(frame, cv.ROTATE_180)
+
     if counter == 20:
         tracker.get_next_frame(frame)
     
