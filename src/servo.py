@@ -15,6 +15,8 @@ class ServoUtil:
     - Left, Center, Right used to convert angle in to Duty Cycle
     '''
     def __init__(self, gpio_pin, frequency, left, center, right):
+        self.gpio_pin = gpio_pin
+
         self.left = left
         self.center = center
         self.right = right
@@ -41,3 +43,4 @@ class ServoUtil:
         Closes comunication with the servo.
         '''
         self.servo.stop()
+        GPIO.cleanup(self.gpio_pin)
