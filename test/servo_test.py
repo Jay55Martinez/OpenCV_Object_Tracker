@@ -1,24 +1,17 @@
-import sys
-import os
 import time
-import RPi.GPIO as GPIO
 sys.path.append(os.path.abspath('../src'))
 from servo import ServoUtil
 
-gpio = 18
+motor = ServoUtil(18, 50, 2.5, 7.5, 12)
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(gpio, GPIO.OUT)
-
-servo = GPIO.PWM(gpio, 50)
-
-servo.start(0)
+motor.set_angle(90) #center
 time.sleep(1)
-servo.ChangeDutyCycle(5)
+motor.set_angle(0) #left
 time.sleep(1)
-servo.ChangeDutyCycle(10)
+motor.set_angle(90) #center
 time.sleep(1)
-servo.ChangeDutyCycle(0)
+motor.set_angle(180) #right
+time.sleep(1)
+motor.set_angle(90) #center
 
-servo.stop()
-GPIO.cleanup(gpio)
+motor.finish()
