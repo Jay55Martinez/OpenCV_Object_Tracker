@@ -56,13 +56,13 @@ class Tracker2D:
 
         if self.displacement < start_center:
             print('left side of screen')
-            self.servo.set_angle(-12)
+            self.servo.set_angle(45)
         elif self.displacement > end_center:
             print('right side of screen')
-            self.servo.set_angle(12)
+            self.servo.set_angle(135)
         else:
             print('center')
-        
+        self.detector.box_x = None
     
         
         

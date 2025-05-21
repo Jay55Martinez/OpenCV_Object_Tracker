@@ -1,46 +1,45 @@
-import RPi.GPIO as GPIO
+import pigpio
+import time
 
 '''
 Micro Servo 9g A0090:
-2.5 - left -90 degrees
-7.5 - center 0 degrees
-12 - right 90 degrees
+50 - left -90 degrees
+1500 - center 0 degrees
+2500 - right 90 degrees
 '''
 
 class ServoUtil:
     '''
-    ServoUtil(GPIO_Pin, Frequency, Left, Center, Right) 
+    ServoUtil(GPIO_Pin, Left, Center, Right)
 
-    - Allows for the set-up of a servo and handling angle control.
-    - Left, Center, Right used to convert angle in to Duty Cycle
+    - Uses pigpio for smooth and stable servo control via pulse widths.
+    - Left, Center, Right should be pulse widths in microseconds.
     '''
-    def __init__(self, gpio_pin, frequency, left, center, right):
+    def __init__(self, gpio_pin, left=500, center=1500, right=2500):
         self.gpio_pin = gpio_pin
-
         self.left = left
         self.center = center
         self.right = right
 
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(gpio_pin, GPIO.OUT)
-        
-        self.servo = GPIO.PWM(gpio_pin, frequency)
-        self.servo.start(0)
+        self.pi = pigpio.pi()
+        if not self.pi.connected:
+            raise IOError("Cannot connect to pigpio daemon. Did you run 'sudo pigpiod'?")
+
+        self.pi.set_mode(gpio_pin, pigpio.OUTPUT)
     
     def set_angle(self, angle):
         '''
-        Changes the oritation of the servo based on the given center.
+        Sets servo angle using linear interpolation of pulse widths.
         '''
-        duty_cycle = (angle * (self.right - self.left)) / 180 + self.left
-        if duty_cycle < self.left:
-            duty_cycle = self.left
-        elif duty_cycle > self.right:
-            duty_cycle = self.right 
-        self.servo.ChangeDutyCycle(duty_cycle)
+        pulse_width = (angle * (self.right - self.left)) / 180 + self.left
+        pulse_width = max(self.left, min(self.right, pulse_width))
+        self.pi.set_servo_pulsewidth(self.gpio_pin, pulse_width)
 
     def finish(self):
         '''
-        Closes comunication with the servo.
+        Stops sending PWM signal to the servo.
         '''
-        self.servo.stop()
-        GPIO.cleanup(self.gpio_pin)
+        self.set_angle(90)
+        time.sleep(1)
+        self.pi.set_servo_pulsewidth(self.gpio_pin, 0)
+        self.pi.stop()
