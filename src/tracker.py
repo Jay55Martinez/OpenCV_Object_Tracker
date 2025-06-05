@@ -42,35 +42,21 @@ class Tracker2D:
         """
         frame_center = self.detector.frame_width // 2
         box_center = self.detector.box_x + (self.detector.box_width // 2)
-        
         self.displacement = frame_center - box_center
 
-        # TODO: add a dampening factor to the displacement
-        # Find the center range of the screen
-        start_center = -int(self.detector.frame_width // self.dampening_factor)
-        print(start_center)
-        end_center = int(self.detector.frame_width // self.dampening_factor)
-        print(end_center)
+        dead_zone = self.detector.frame_width // self.dampening_factor
+        if abs(self.displacement) < dead_zone:
+            print("In dead zone - no movement")
+            return
+        
+        max_disp = self.detector.frame_width //2
+        normalized_disp = self.displacement / max_disp
 
-        print('displacement ' + str(self.displacement))
+        min_angle = 0
+        max_angle = 180
+        servo_angle = int((normalized_disp + 1) / 2 * (max_angle - min_angle) + min_angle)
 
-        if self.displacement < start_center:
-            print('left side of screen')
-            self.servo.set_angle(45)
-        elif self.displacement > end_center:
-            print('right side of screen')
-            self.servo.set_angle(135)
-        else:
-            print('center')
-        self.detector.box_x = None
-    
-        
-        
+        print(f'displacement: {self.displacement}, angle: {servo_angle}')
+        self.servo.set_angle(servo_angle)
 
-        
-        
-        
-            
-        
-        
-        
+        self.detector.box_x = None #reset the box
