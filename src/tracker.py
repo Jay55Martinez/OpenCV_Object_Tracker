@@ -57,7 +57,7 @@ class Tracker2D:
             self.current_angle = max(0, self.current_angle + 1)
             self.servo.set_angle(self.current_angle)
         else:
-            # 200 pixel dampening zone 
+            # 200 pixel dampening zone
             print('center')
         self.detector.box_x = None
     
