@@ -9,6 +9,7 @@
 import cv2 as cv
 import os
 import numpy as np
+import mediapipe as mp
 from enum import Enum
 
 # Need an enum for mode 
@@ -18,6 +19,7 @@ class Mode(Enum):
     FILE = 3  
     RAW = 4 
     YUNET = 5
+    BLAZEFACE = 6
     
 # Detector Class
 
@@ -48,7 +50,10 @@ class Detector:
             pass
         elif self.mode == Mode.YUNET:
             self.ixl_file = "../out/face_detection_yunet_2022mar.onnx"
-            self.detection_model = cv.FaceDetectorYN.create(self.ixl_file,  '', (0, 0))          
+            self.detection_model = cv.FaceDetectorYN.create(self.ixl_file,  '', (0, 0))
+        elif self.mode == Mode.BLAZEFACE:
+            self.mp_face_detection = mp.solutions.face_detection
+            self.face_detection = self.mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5)          
         
     # get the next frame to be processed returns box corrds (x, y, w, h)
     def get_next_frame(self, frame):
@@ -64,6 +69,8 @@ class Detector:
             self.no_dect()
         elif self.mode == Mode.YUNET:
             self.face_dect_YuNet()
+        elif self.mode ==  Mode.BLAZEFACE:
+            self.face_dect_blazeface()
         else:
             raise RuntimeError("Detector mode not recognized")
         
@@ -130,7 +137,29 @@ class Detector:
                     self.box_y = coords[1]
                     self.box_width = coords[2]
                     self.box_height = coords[3]
-        
+
+    def face_dect_blazeface(self):
+        """
+        Performs face detection using MediaPipe's lightweight BlazeFace model, optimized for real-time performance on CPU-only devices like the Raspberry Pi. 
+        Detects faces in the current frame and selects the largest face for tracking.
+        """
+        rgb_image = cv.cvtColor(self.frame, cv.COLOR_BGR2RGB)
+        results = self.face_detection.process(rgb_image)
+
+        self.bounds = None
+        if results.detections:
+            for detection in results.detections:
+                bboxC = detection.location_data.relative_bounding_box
+                x = int(bboxC.xmin * self.frame_width)
+                y = int(bboxC.ymin * self.frame_height)
+                w = int(bboxC.width * self.frame_width)
+                h = int(bboxC.height * self.frame_height)
+
+                if self.bounds is None or (w * h) > self.bounds[2] * self.bounds[3]:
+                    self.box_x = x
+                    self.box_y = y
+                    self.box_width = w
+                    self.box_height = h
         
     def draw(self):
         """

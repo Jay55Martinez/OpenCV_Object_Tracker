@@ -17,11 +17,11 @@ camera.start()
 motor = ServoUtil(18)
 motor.set_angle(90) # center motor
 
-detector = Detector(Mode.FACE)
+detector = Detector(Mode.BLAZEFACE)
 tracker = Tracker2D(detector, motor)
 tracker.debug = True
 
-# want a detect once every 10 frames
+# want a detect once every 5 frames
 counter = 0
 
 try:
@@ -32,7 +32,7 @@ try:
 
         frame = cv.rotate(frame, cv.ROTATE_180)
 
-        if counter == 20:
+        if counter == 5:
             tracker.get_next_frame(frame)
 
             if detector.box_x != None:
