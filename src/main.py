@@ -29,14 +29,14 @@ try:
         counter += 1
 
         frame = camera.capture_array()
-
+        frame = cv.cvtColor(frame, cv.COLOR_RGBA2BGR)
         frame = cv.rotate(frame, cv.ROTATE_180)
 
         if counter == 5:
-            if detector.box_x != None:
-                detector.draw()
-                
             tracker.get_next_frame(frame)
+
+            
+            detector.draw()
 
             counter = 0
 
