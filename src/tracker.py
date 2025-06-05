@@ -15,6 +15,7 @@ class Tracker2D:
     of how close to the center of the frame the object should be.
     """
     def __init__(self, detector, servo, dampening_factor=4, refresh_rate=5, debug=False):
+        self.current_angle = 90
         self.detector = detector
         self.servo = servo
         self.dampening_factor = dampening_factor
@@ -44,19 +45,29 @@ class Tracker2D:
         box_center = self.detector.box_x + (self.detector.box_width // 2)
         self.displacement = frame_center - box_center
 
-        dead_zone = self.detector.frame_width // self.dampening_factor
-        if abs(self.displacement) < dead_zone:
-            print("In dead zone - no movement")
-            return
+        print('displacement ' + str(self.displacement))
+        print('servo angel: ' + str(self.current_angle))
+
+        if self.displacement < -100:
+            # If object is to the left of center, displacement is positive => decrease angle => turn right
+            self.current_angle = min(180, self.current_angle - 1)
+            self.servo.set_angle(self.current_angle)
+        elif self.displacement > 100:
+            # If object is to the right of center, displacement is negative => increase angle => turn left
+            self.current_angle = max(0, self.current_angle + 1)
+            self.servo.set_angle(self.current_angle)
+        else:
+            # 200 pixel dampening zone
+            print('center')
+        self.detector.box_x = None
+    
         
-        max_disp = self.detector.frame_width //2
-        normalized_disp = self.displacement / max_disp
+        
 
-        min_angle = 0
-        max_angle = 180
-        servo_angle = int((normalized_disp + 1) / 2 * (max_angle - min_angle) + min_angle)
-
-        print(f'displacement: {self.displacement}, angle: {servo_angle}')
-        self.servo.set_angle(servo_angle)
-
-        self.detector.box_x = None #reset the box
+        
+        
+        
+            
+        
+        
+        
