@@ -33,10 +33,10 @@ try:
         frame = cv.rotate(frame, cv.ROTATE_180)
 
         if counter == 5:
-            tracker.get_next_frame(frame)
-
             if detector.box_x != None:
                 detector.draw()
+                
+            tracker.get_next_frame(frame)
 
             counter = 0
 

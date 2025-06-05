@@ -36,10 +36,20 @@ class Tracker2D:
         
     def find_displacement2D(self):
         """
-        find_displacement(None) -> None:
-        finds the displacement of the object from the center of the frame to the center of the bounding box.
-        if the object is to the left of the frame, the displacement will be negative. If the object is to the right
-        of the frame, the displacement will be positive. The max displacement absolute value is half the width of the frame.
+        find_displacement2D(None) -> None:
+        Computes the horizontal displacement of a detected object from the center of the frame
+        and adjusts the servo angle to re-center the object.
+
+        - Displacement is calculated as: frame_center - object_center
+        - Positive displacement means object is to the left of center.
+        - Negative displacement means object is to the right of center.
+        - A ±100 pixel dead zone prevents unnecessary servo jitter.
+        - Servo angle is adjusted within the range [0, 180].
+
+        Behavior:
+        - If object is left of center (displacement > 100): turn servo right (decrease angle)
+        - If object is right of center (displacement < -100): turn servo left (increase angle)
+        - If within center zone (abs(displacement) <= 100): do nothing
         """
         frame_center = self.detector.frame_width // 2
         box_center = self.detector.box_x + (self.detector.box_width // 2)
@@ -49,16 +59,16 @@ class Tracker2D:
         print('servo angel: ' + str(self.current_angle))
 
         if self.displacement < -100:
-            # If object is to the left of center, displacement is positive => decrease angle => turn right
+            # Object is to the right of center → turn servo left
             self.current_angle = min(180, self.current_angle - 1)
             self.servo.set_angle(self.current_angle)
         elif self.displacement > 100:
-            # If object is to the right of center, displacement is negative => increase angle => turn left
-            self.current_angle = max(0, self.current_angle + 1)
+            # Object is to the left of center → turn servo right
+            self.currentgle = max(0, self.current_angle + 1)
             self.servo.set_angle(self.current_angle)
         else:
             # 200 pixel dampening zone
-            print('center')
+            print('Object is centered.')
         self.detector.box_x = None
     
         
