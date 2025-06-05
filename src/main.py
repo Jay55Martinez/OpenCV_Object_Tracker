@@ -35,9 +35,11 @@ try:
         if counter == 5:
             tracker.get_next_frame(frame)
 
-            
-            detector.draw()
+            if detector.box_x != None:
+                detector.draw()
 
+            # clear the last detection
+            detector.box_x = None
             counter = 0
 
         if video_window:

@@ -64,12 +64,11 @@ class Tracker2D:
             self.servo.set_angle(self.current_angle)
         elif self.displacement > 100:
             # Object is to the left of center → turn servo right
-            self.currentgle = max(0, self.current_angle + 1)
+            self.current_angle = max(0, self.current_angle + 1)
             self.servo.set_angle(self.current_angle)
         else:
             # 200 pixel dampening zone
             print('Object is centered.')
-        self.detector.box_x = None
     
         
         
